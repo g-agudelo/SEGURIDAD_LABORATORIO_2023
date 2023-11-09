@@ -1,4 +1,5 @@
 def base_dato():
+    #IMPORTAMOS LA LIBRERIA QUE VAMOS A USAR
     import os
     from os import replace
     from selenium import webdriver
@@ -6,10 +7,12 @@ def base_dato():
     from webdriver_manager.firefox import GeckoDriverManager
     from selenium.webdriver.common.by import By
     from pathlib import Path
+    #INSTALAMOS LOS DRIVER PARA HACER WEB-SCRAPPING
     options = webdriver.FirefoxOptions()
     options.add_argument('--headless')
     driver = webdriver.Firefox(options=options,service=Service(GeckoDriverManager().install()))
-    driver.get('https://unvirtual.medellin.unal.edu.co/mod/simplecertificate/view.php?id=137024&tab=1&page=0&perpage=200&orderby=username')
+    #ACCEDEMOS AL UNVIRTUAL Y DESCARGAMOS LA BASE DEDATOS
+    driver.get('https://unvirtual.medellin.unal.edu.co/mod/simplecertificate/view.php?id=141387&tab=1&page=0&perpage=200&orderby=username')
     usuario=driver.find_element("name","username")
     password=driver.find_element("name","password")
     usuario.send_keys('gagudelo')
@@ -19,26 +22,29 @@ def base_dato():
     boton=driver.find_elements(By.XPATH,'//*[@id="bulkissue"]/div/table/tbody/tr/td[4]/div')
     boton[0].click()
     driver.close()
+    #ACTUALIZAMOS LA BASE DE DATOS
     path = str(os.path.join(Path.home(), "Downloads"))
     replace(path+'\\Seguridad en laboratorios-Certificado - Laboratorio de vibro-acústica.xlsx',os.getcwd()+'\\usuarios.xlsx')
 
     
 def buscarbd():
+    #IMPORTAMOS LA LIBRERIAS QUE VAMOS A USAR
     import cv2
     import pandas as pd
     import os
+    #ACCEDEMOS A LA CAMARA Y DETECTAMOS EL CODIGO QR
     cap = cv2.VideoCapture(0)
     detector = cv2.QRCodeDetector()
     while True:
         _, img = cap.read()
-        data, bbox, _ = detector.detectAndDecode(img)
+        data,bbox, _ = detector.detectAndDecode(img)
         if data:
             a=data
             break
         cv2.imshow("LECTOR DE CODIGO QR", img)    
         if cv2.waitKey(1) == ord("q"):
             break
-    
+    #VERIFICAMOS EL CODIGO QR DEL ESTUDIANTE
     ruta_excel = os.getcwd()+'\\usuarios.xlsx'
     excel = pd.read_excel(ruta_excel)
     codigos=excel['Código']
